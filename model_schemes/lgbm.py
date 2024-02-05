@@ -34,7 +34,6 @@ class LgbmModel:
         self.x_test = None
         self.y_test = None
         self.y_pred = None
-        self.valid_sets = []
         self.features_pipe = None 
         self.targets_pipe = None
 
@@ -44,18 +43,15 @@ class LgbmModel:
         self.x_train = self.features_pipe.fit_transform(train_set)
         self.y_train = self.targets_pipe.fit_transform(train_set)
         train_set=lgb.Dataset(self.x_train, self.y_train)
-        self.valid_sets += [train_set]
         
         if valid_set is not None:
             self.x_valid = self.features_pipe.transform(valid_set)
             self.y_valid = self.targets_pipe.transform(valid_set)
             valid_set=lgb.Dataset(self.x_valid, self.y_valid)
-            self.valid_sets += [valid_set]
             
         self.trained_model=lgb.train(
             params=self.model_hp,
             train_set=train_set,
-            valid_sets=self.valid_sets
             )
     
     def predict(self,df:pd.DataFrame):
