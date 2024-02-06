@@ -25,6 +25,19 @@ def train_val_test_split_original() ->Tuple[pd.DataFrame, pd.DataFrame, pd.DataF
     test_set = valve1_data_sets.iloc[-1853:]
     return train_set, valid_set, test_set
 
+def data_spliter(df,num_splits):
+    num_rows_per_part = len(df) // num_splits
+
+    parts = []
+    for i in range(num_splits):
+        if i < num_splits-1:
+            part = df.iloc[i * num_rows_per_part: (i + 1) * num_rows_per_part]
+        else:
+            # For the last part, include the remaining rows
+            part = df.iloc[i * num_rows_per_part:]
+        parts.append(part)
+    return parts
+
 def smooth_curve(x):
     #x=1 dimension array
     window_len = 11
@@ -163,4 +176,3 @@ class LgbmDataPrep:
         targets_pipeline = self.get_targets_pipeline()
             
         return features_pipeline, targets_pipeline
-            
