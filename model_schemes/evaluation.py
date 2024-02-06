@@ -48,3 +48,58 @@ class ModelEvaluation:
         # Display the plot
         plt.tight_layout()
         plt.show()
+
+
+# def calc_metrics(metrics,y_test,y_pred):
+#     pass
+# def plot_metrics(metrics,metrics_res):
+#     pass
+
+# class ModelEvaluation:
+    
+#     """
+#     eval_config = {
+#       'lgb' : {
+#           'y_test' : pd.Series(),
+#           'y_pred': pd.Series()
+#       } ,
+#       'lgb_new': {
+#           'y_test' : pd.Series(),
+#           'y_pred': pd.Series()
+#       }
+# }
+#     """
+    
+#     def __init__(self,eval_config) -> None:
+#         self.eval_config = eval_config
+        
+#     def run(self):
+        
+#         for model in self.eval_config.keys():
+#             pass
+
+
+# eval_config = {
+#     'metrics': [],
+#       'lgb' : {
+#           'y_test' : pd.Series(),
+#           'y_pred': pd.Series()
+#       } ,
+#       'lgb_new': {
+#           'y_test' : pd.Series(),
+#           'y_pred': pd.Series()
+#       }
+# }
+
+# res = {
+#     'lgb' : {
+#         'cm' : cm,
+#         'roc_res' : (fpr, tpr, thresholds),
+#         'auc' : roc_auc
+#     },
+#     'lgb_new': {
+#         'cm' : cm,
+#         'roc_res' : (fpr, tpr, thresholds),
+#         'auc' : roc_auc
+#     }
+# }
