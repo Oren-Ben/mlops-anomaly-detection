@@ -6,7 +6,7 @@ from sklearn.pipeline import Pipeline
 from .lgbm_multi import MultiModelLGBM
 from .util import get_file_paths
 from .calc_metrics import calc_metrics
-
+from .plot import plot
 
 dirname = os.path.dirname(__file__)
 
@@ -56,6 +56,9 @@ print('lgbm_multi_model_mean', lgbm_multi_model_mean)
 print('lgbm_multi_model_max', lgbm_multi_model_max)
 print('lgbm_multi_model_min', lgbm_multi_model_min)
 
+plot(lgbm_metrics, lgbm_multi_model_mean, title = 'Average Probability')
+plot(lgbm_metrics, lgbm_multi_model_max, title = 'Max Probability')
+plot(lgbm_metrics, lgbm_multi_model_min, title = 'Min Probability')
 # TODO: Save your model
 # save_path = os.path.join(dirname, '../model/')
 # lgbm_file = 'lgbm.txt'
@@ -65,4 +68,5 @@ print('lgbm_multi_model_min', lgbm_multi_model_min)
 # lgbm_multi_file = 'lgbm_multi'
 # lgbm_multi_model.savel(f'{save_path}{lgbm_multi_file}')
 
-
+def x():
+    print(lgbm_multi_model_mean.shape)
