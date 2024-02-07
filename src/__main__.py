@@ -2,10 +2,10 @@ import os
 import numpy as np
 import pandas as pd
 import lightgbm as lgb
-from lgbm_multi import MultiModelLGBM
-from util import get_file_paths
 from sklearn.pipeline import Pipeline
-from calc_metrics import calc_metrics
+from .lgbm_multi import MultiModelLGBM
+from .util import get_file_paths
+from .calc_metrics import calc_metrics
 
 
 dirname = os.path.dirname(__file__)
@@ -51,7 +51,11 @@ mean, max, min =lgbm_multi_model.predict_proba(X_test)
 lgbm_multi_model_mean = calc_metrics(y_test, mean[:, 1])
 lgbm_multi_model_max = calc_metrics(y_test, max[:, 1])
 lgbm_multi_model_min = calc_metrics(y_test, min[:, 1])
-print(mean)
+print('lgbm_metrics', lgbm_metrics)
+print('lgbm_multi_model_mean', lgbm_multi_model_mean)
+print('lgbm_multi_model_max', lgbm_multi_model_max)
+print('lgbm_multi_model_min', lgbm_multi_model_min)
+
 # TODO: Save your model
 # save_path = os.path.join(dirname, '../model/')
 # lgbm_file = 'lgbm.txt'

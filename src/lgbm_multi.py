@@ -20,8 +20,8 @@ class MultiModelLGBM(BaseEstimator, ClassifierMixin):
         return self
     
     def load(self, pathname):
-        for i, model in enumerate(self.models):
-            self.base_estimator.Booster(model_file=f'{pathname}_{i}.txt')
+        for i in range(self.models):
+            lgbm.Booster(model_file=f'{pathname}_{i}.txt')
         return self
 
     def save(self, pathname):
