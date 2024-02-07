@@ -59,7 +59,6 @@ print(mean)
 
 
 # lgbm_multi_file = 'lgbm_multi'
-# lgbm_multi_model.save_model(f'{save_path}{lgbm_multi_file}')
+# lgbm_multi_model.savel(f'{save_path}{lgbm_multi_file}')
 
-# # Load the model
-# loaded_model = lgb.Booster(model_file='lgbm_model.txt')
+
