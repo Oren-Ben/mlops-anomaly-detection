@@ -1,4 +1,5 @@
 .DS_Store
 /.venv
 /__pycache__
-model_schemes/__pycache__
+/v1_model_schemes/__pycache__
+/model_schemes/__pycache__
