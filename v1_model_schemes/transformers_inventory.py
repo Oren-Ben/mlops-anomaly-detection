@@ -107,34 +107,6 @@ class CreateStatsDataframe(BaseEstimator, TransformerMixin):
 
         return df
     
-# class DataSplitter(BaseEstimator, TransformerMixin):
-#     def __init__(self, num_splits: int):
-#         self.num_splits = num_splits
-
-#     def fit(self, X, y=None):
-#         return self
-
-#     def transform(self, X):
-#         """
-#         Splits a dataframe to multiple splits determined by num_splits argument
-
-#         Args:
-#             X (pd.DataFrame): The data set to split by the index (not shuffled)
-
-#         Returns:
-#             List[pd.DataFrame]: list that contains the dataframe splits
-#         """
-#         num_rows_per_part = len(X) // self.num_splits
-#         parts = []
-#         for i in range(self.num_splits):
-#             if i < self.num_splits - 1:
-#                 part = X.iloc[i * num_rows_per_part: (i + 1) * num_rows_per_part]
-#             else:
-#                 # For the last part, include the remaining rows
-#                 part = X.iloc[i * num_rows_per_part:]
-#             parts.append(part)
-#         return parts
-    
 class DataSplitter(BaseEstimator, TransformerMixin):
     def __init__(self, num_splits: int,part_num):
         self.num_splits = num_splits
@@ -190,3 +162,29 @@ class AggregateModelScores(BaseEstimator, TransformerMixin):
         )
         
         return df
+    
+class SequenceSplitterTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, n_steps):
+        self.n_steps = n_steps
+
+    def fit(self, X, y=None):
+        # No fitting needed
+        return self
+
+    def transform(self, sequences):
+        
+        if isinstance(sequences,pd.DataFrame):
+            sequences = sequences.values
+        
+        X, y = list(), list()
+        for i in range(len(sequences)):
+            # find the end of this pattern
+            end_ix = i + self.n_steps
+            # check if we are beyond the dataset
+            if end_ix > len(sequences) - 1:
+                break
+            # gather input and output parts of the pattern
+            seq_x, seq_y = sequences[i:end_ix, :], sequences[end_ix, :]
+            X.append(seq_x)
+            y.append(seq_y)
+        return np.array(X), np.array(y)

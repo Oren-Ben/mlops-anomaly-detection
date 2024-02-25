@@ -1,5 +1,4 @@
 from typing import Dict, Any
-import pandas as pd
 from utils_data import data_splitter
 import lightgbm as lgb
 
@@ -36,7 +35,6 @@ class LgbmModel:
     def fit(self, X,y)->None:
         
         x_parts = data_splitter(X, num_splits=self.num_splits)
-        print("Type of y:", type(y))
         y_parts = data_splitter(y, num_splits=self.num_splits)
         self.x_train = x_parts[self.partition_num]
         self.y_train = y_parts[self.partition_num]

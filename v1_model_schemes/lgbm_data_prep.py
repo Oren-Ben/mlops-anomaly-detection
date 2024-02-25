@@ -35,7 +35,7 @@ class LgbmDataPrep:
         union_pipeline =FeatureUnion(transformer_list=transformers_list)
         
         features_pipeline = Pipeline([
-            ('transfomations', union_pipeline),
+            ('transformations', union_pipeline),
             ('processing_results',AggregateModelScores())
         ])
         

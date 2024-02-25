@@ -88,7 +88,6 @@ def data_splitter(X: Union[pd.DataFrame, np.ndarray], num_splits: int) -> List[p
     Returns:
         List[pd.DataFrame]: list that contains the dataframe splits
     """
-
     if isinstance(X, pd.DataFrame):
         num_rows = len(X)
     elif isinstance(X, np.ndarray):

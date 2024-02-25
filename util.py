@@ -1,14 +1,15 @@
 import os
 
-def get_file_paths(directory = ".", extension = ".csv"):
+
+def get_file_paths(directory=".", extension=".csv"):
     """
     Get all the file paths in the given directory.
-    
+
     Parameters
     ----------
     directory : str
         The directory to search for files.
-        
+
     Returns
     -------
     list
