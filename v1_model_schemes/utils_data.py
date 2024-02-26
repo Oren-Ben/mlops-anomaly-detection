@@ -94,6 +94,9 @@ def data_splitter(X: Union[pd.DataFrame, np.ndarray], num_splits: int) -> List[p
         num_rows = X.shape[0]
     else:
         raise ValueError("Input data must be a DataFrame or ndarray.")
+    
+    if num_splits ==0:
+        return [X]
 
     num_rows_per_part = num_rows // num_splits
 

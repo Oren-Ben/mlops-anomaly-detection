@@ -146,6 +146,7 @@ class AggregateModelScores(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         # Get the number of columns in the matrix
+        print("X.shape: ",X.shape)
         num_columns = X.shape[1]
         
         # Create column names as running numbers (e.g., 0, 1, 2, ...)
