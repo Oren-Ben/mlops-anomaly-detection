@@ -40,8 +40,6 @@ class LstmModel:
         X_parts = data_splitter(X, num_splits=self.num_splits)[self.partition_num]
         self.scaler = StandardScaler()
         X_parts = self.scaler.fit_transform(X_parts)
-        print(X_parts.shape)
-        print(X_parts[:3])
         
         x,y = split_sequences(X_parts,n_steps=self.sequences_length)
         orig_model = Vanilla_LSTM(self.model_hp)

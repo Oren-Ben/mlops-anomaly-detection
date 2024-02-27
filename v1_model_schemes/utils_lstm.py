@@ -12,7 +12,7 @@ def load_lstm_dfs(path_to_data=DATA_PATH):
     all_files = []
     for root, dirs, files in os.walk(path_to_data):
         for file in files:
-            if file.endswith(".csv") and "lgbm_baseline_predictions" not in file:
+            if file.endswith(".csv") and "baseline_predictions" not in file:
                 all_files.append(os.path.join(root, file))
 
     list_of_df = [

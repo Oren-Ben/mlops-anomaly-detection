@@ -12,11 +12,12 @@ import copy
 
 
 class LgbmDataPrep:
-    def __init__(self,look_back:int=10,num_splits:int=5) -> None:
+    def __init__(self,target_column:str = 'anomaly',look_back:int=10,num_splits:int=5) -> None:
+        self.target_column = target_column
         self.look_back = look_back 
         self.num_splits = num_splits
 
-    def get_features_pipeline(self):
+    def get_model_pipeline(self):
         
         single_features_pipeline =Pipeline([
                 ("drop_changepoint", DropColumnTransformer(["changepoint"])),
@@ -46,7 +47,7 @@ class LgbmDataPrep:
         return Pipeline([("targets_creation", LgbmTargetsCreator(look_back=self.look_back))])
 
     def run(self):
-        features_pipeline = self.get_features_pipeline()
+        model_pipeline = self.get_model_pipeline()
         targets_pipeline = self.get_targets_pipeline()
 
-        return features_pipeline, targets_pipeline
+        return model_pipeline, targets_pipeline

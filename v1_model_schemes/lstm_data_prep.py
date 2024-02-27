@@ -20,7 +20,7 @@ class LstmDataPrep:
     def get_preprocess_pipeline(self):
         return Pipeline([( "drop_targets",DropColumnTransformer(["changepoint", self.target_column]),),])
 
-    def model_pipeline(self):
+    def get_model_pipeline(self):
         
         single_model_pipeline = self.get_preprocess_pipeline()
         
@@ -52,3 +52,6 @@ class LstmDataPrep:
                 ])
                 
         return features_pipeline
+    
+    def run(self):
+        return self.get_model_pipeline()

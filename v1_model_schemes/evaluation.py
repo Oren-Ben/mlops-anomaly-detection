@@ -61,9 +61,12 @@ class ModelEvaluation:
             self.models_config[model_name]['tpr'] = tpr
             self.models_config[model_name]['thresholds'] = thresholds
             self.models_config[model_name]['roc_auc'] = roc_auc
-        
+        # return self
 
     def plot_metrics(self,title = 'Model Evaluation Metrics'):
+        
+        self.calc_metrics()
+
         fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(14, 5))
         fig.suptitle(title, fontsize=16, y=1.02)
         roc_curve_ax = ax[2]
@@ -71,12 +74,12 @@ class ModelEvaluation:
         
         for i,model_name in enumerate(self.models_config.keys()):
             cm_ax = ax[i]
-            ConfusionMatrixDisplay(confusion_matrix=self.models_config[model_name]['cm']).plot(ax=cm_ax,cmap='Blues')
+            ConfusionMatrixDisplay(confusion_matrix=self.models_config[model_name]['cm']).plot(ax=cm_ax,cmap='Blues',values_format='d')
             cm_ax.set_title(f'{model_name} Confusion Matrix')
             cm_ax.set_xlabel('Predicted labels')
             cm_ax.set_ylabel('True labels')
             
-            label=f'AUC = {self.models_config[model_name]["roc_auc"]:.2f}'
+            label=f'AUC {model_name} = {self.models_config[model_name]["roc_auc"]:.2f}'
             roc_curve_ax.plot(
                 self.models_config[model_name]['fpr'], 
                 self.models_config[model_name]['tpr'],
@@ -85,18 +88,21 @@ class ModelEvaluation:
         roc_curve_ax.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
         roc_curve_ax.set_xlabel('False Positive Rate')
         roc_curve_ax.set_ylabel('True Positive Rate')
-        roc_curve_ax.set_title('Receiver Operating Characteristic (ROC) Curve')
+        roc_curve_ax.set_title('ROC Curve')
         roc_curve_ax.legend(loc='lower right')
             
         plt.tight_layout()
         plt.show()
 
 class ModelSelector:
-    def __init__(self,model,params,train_set,test_set) -> None:
+    def __init__(self,model,params,train_set,test_set) -> None: # ,baseline_mar,baseline_f1
         self.train_set =train_set
         self.test_set = test_set
         self.best_model = None
-        
+        # self.baseline_mar = baseline_mar
+        # self.baseline_f1 = baseline_f1
+        # self.best_mar = None
+        # self.f1 = None
     def choose_best(self):
         pass
     
