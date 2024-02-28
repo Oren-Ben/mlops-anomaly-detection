@@ -22,12 +22,14 @@ def load_lstm_dfs(path_to_data=DATA_PATH):
     ]
     return list_of_df
 
-def load_train_test_lstm(list_of_dfs: Optional[List]= None):
+
+def load_train_test_lstm(list_of_dfs: Optional[List] = None):
     if not list_of_dfs:
         list_of_dfs = load_lstm_dfs()
     train_set = pd.concat([df[:400] for df in list_of_dfs])
     test_set = pd.concat(list_of_dfs)
     return train_set, test_set
+
 
 def split_sequences(sequences, n_steps):
     X, y = list(), list()
@@ -35,7 +37,7 @@ def split_sequences(sequences, n_steps):
         # find the end of this pattern
         end_ix = i + n_steps
         # check if we are beyond the dataset
-        if end_ix > len(sequences)-1:
+        if end_ix > len(sequences) - 1:
             break
         # gather input and output parts of the pattern
         seq_x, seq_y = sequences[i:end_ix, :], sequences[end_ix, :]

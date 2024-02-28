@@ -1,9 +1,10 @@
-import pandas as pd 
+import pandas as pd
 from typing import Tuple
 from utils_data import load_dfs_by_source
 
 
-DATA_PATH = '../data/'
+DATA_PATH = "../data/"
+
 
 def lgbm_train_val_test_split_original() -> (
     Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]

@@ -34,20 +34,21 @@ def load_dfs_by_source(data_dir: str, data_source: str) -> pd.DataFrame:
         # .drop(columns=['changepoint'])
         .sort_index()
     )
-    
-def x_y_split(df:pd.DataFrame,label_column:str)->Tuple[pd.DataFrame,np.array]:
-    """ Splits DataFrame to features df  and label column as np.array
+
+
+def x_y_split(df: pd.DataFrame, label_column: str) -> Tuple[pd.DataFrame, np.array]:
+    """Splits DataFrame to features df  and label column as np.array
 
     Args:
-        df : dataset 
+        df : dataset
         label_column: the name of the label column in the dataset.
 
     Returns:
-        Tuple: (X, y) 
+        Tuple: (X, y)
     """
-    X = df.drop(label_column,axis=1)
-    y =   df[label_column].values
-    return X,y
+    X = df.drop(label_column, axis=1)
+    y = df[label_column].values
+    return X, y
 
 
 def smooth_curve(x):
@@ -78,7 +79,9 @@ def create_dataset(dataset, look_back=10):
     return np.array(data_X).reshape(-1, 3)
 
 
-def data_splitter(X: Union[pd.DataFrame, np.ndarray], num_splits: int) -> List[pd.DataFrame]:
+def data_splitter(
+    X: Union[pd.DataFrame, np.ndarray], num_splits: int
+) -> List[pd.DataFrame]:
     """
     Splits a dataframe or ndarray to multiple splits determined by num_splits argument
 
@@ -95,8 +98,8 @@ def data_splitter(X: Union[pd.DataFrame, np.ndarray], num_splits: int) -> List[p
         num_rows = X.shape[0]
     else:
         raise ValueError("Input data must be a DataFrame or ndarray.")
-    
-    if num_splits ==0 or num_splits==1:
+
+    if num_splits == 0 or num_splits == 1:
         return [X]
 
     num_rows_per_part = num_rows // num_splits
@@ -110,14 +113,16 @@ def data_splitter(X: Union[pd.DataFrame, np.ndarray], num_splits: int) -> List[p
 
     return parts
 
+
 class AbstractFullModelPipeline(ABC):
     """
     The parent of FullLstmPipeline, FullLgbmPipeline
     """
-    
+
     @abstractmethod
-    def run(self)-> pd.Series:
+    def run(self) -> pd.Series:
         pass
+
     @abstractmethod
     def get_y_test(self):
         pass

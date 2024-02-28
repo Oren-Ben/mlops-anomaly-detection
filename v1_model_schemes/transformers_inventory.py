@@ -4,6 +4,7 @@ from typing import Tuple, List
 from sklearn.base import BaseEstimator, TransformerMixin
 from utils_data import smooth_curve, create_dataset
 
+
 class DropColumnTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(self, columns_to_drop: List):
@@ -22,7 +23,8 @@ class DropColumnTransformer(BaseEstimator, TransformerMixin):
         X_transformed = X.drop(columns=self.columns_to_drop, axis=1)
 
         return X_transformed
-    
+
+
 class LgbmTargetsCreator(BaseEstimator, TransformerMixin):
     def __init__(self, look_back: int = 10) -> None:
         self.look_back = look_back
@@ -34,6 +36,7 @@ class LgbmTargetsCreator(BaseEstimator, TransformerMixin):
     def transform(self, X):
 
         return X[self.look_back - 1 :]
+
 
 class SmoothCurve(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
@@ -48,7 +51,8 @@ class SmoothCurve(BaseEstimator, TransformerMixin):
             X_win[:, i] = smooth_curve(X.values[:, i].flatten())
 
         return X_win
-    
+
+
 class CreateStatsDataframe(BaseEstimator, TransformerMixin):
 
     stats_cols = [
@@ -106,9 +110,10 @@ class CreateStatsDataframe(BaseEstimator, TransformerMixin):
         df = pd.DataFrame(data=X_win, columns=CreateStatsDataframe.stats_cols)
 
         return df
-    
+
+
 class DataSplitter(BaseEstimator, TransformerMixin):
-    def __init__(self, num_splits: int,part_num):
+    def __init__(self, num_splits: int, part_num):
         self.num_splits = num_splits
         self.part_num = part_num
 
@@ -129,16 +134,17 @@ class DataSplitter(BaseEstimator, TransformerMixin):
         parts = []
         for i in range(self.num_splits):
             if i < self.num_splits - 1:
-                part = X.iloc[i * num_rows_per_part: (i + 1) * num_rows_per_part]
+                part = X.iloc[i * num_rows_per_part : (i + 1) * num_rows_per_part]
             else:
                 # For the last part, include the remaining rows
-                part = X.iloc[i * num_rows_per_part:]
+                part = X.iloc[i * num_rows_per_part :]
             parts.append(part)
         if self.part_num is not None:
             print(self.part_num)
             parts = parts[self.part_num]
         return parts
-    
+
+
 class AggregateModelScores(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         # No fitting needed
@@ -146,24 +152,22 @@ class AggregateModelScores(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         # Get the number of columns in the matrix
-        print("X.shape: ",X.shape)
+        print("X.shape: ", X.shape)
         num_columns = X.shape[1]
-        
+
         # Create column names as running numbers (e.g., 0, 1, 2, ...)
-        column_names = [f'model_{i}' for i in range(num_columns)]
-        
+        column_names = [f"model_{i}" for i in range(num_columns)]
+
         # Create a DataFrame from the matrix with running number column names
-        df = (
-            pd.DataFrame(X, columns=column_names)
-            .assign(
+        df = pd.DataFrame(X, columns=column_names).assign(
             avg_prediction=lambda df_: df_.mean(axis=1),
             median_prediction=lambda df_: df_.median(axis=1),
             max_prediction=lambda df_: df_.max(axis=1),
-            )
         )
-        
+
         return df
-    
+
+
 class SequenceSplitterTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, n_steps):
         self.n_steps = n_steps
@@ -173,10 +177,10 @@ class SequenceSplitterTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, sequences):
-        
-        if isinstance(sequences,pd.DataFrame):
+
+        if isinstance(sequences, pd.DataFrame):
             sequences = sequences.values
-        
+
         X, y = list(), list()
         for i in range(len(sequences)):
             # find the end of this pattern
