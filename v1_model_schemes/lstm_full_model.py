@@ -2,13 +2,15 @@ import pandas as pd
 from utils_lstm import load_lstm_dfs, load_train_test_lstm
 from lstm_data_prep import LstmDataPrep
 from typing import Dict, Any
+from utils_data import AbstractFullModelPipeline
 
-class FullLstmPipeline:
+class FullLstmPipeline(AbstractFullModelPipeline):
     """
     model_config = {
         'target_column': 'anomaly',
         'n_steps' : 5,
         'num_splits' : 34,
+        'th': 0.9,
     }
     
     """

@@ -1,6 +1,7 @@
 from typing import Dict, Any
 from utils_data import data_splitter
 import lightgbm as lgb
+import pandas as pd
 
 
 MODEL_HP = {

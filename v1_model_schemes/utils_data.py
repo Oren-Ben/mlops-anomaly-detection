@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 from typing import List, Union, Tuple
+from abc import ABC, abstractmethod
 
 
 def load_dfs_by_source(data_dir: str, data_source: str) -> pd.DataFrame:
@@ -95,7 +96,7 @@ def data_splitter(X: Union[pd.DataFrame, np.ndarray], num_splits: int) -> List[p
     else:
         raise ValueError("Input data must be a DataFrame or ndarray.")
     
-    if num_splits ==0:
+    if num_splits ==0 or num_splits==1:
         return [X]
 
     num_rows_per_part = num_rows // num_splits
@@ -108,3 +109,15 @@ def data_splitter(X: Union[pd.DataFrame, np.ndarray], num_splits: int) -> List[p
         parts.append(part)
 
     return parts
+
+class AbstractFullModelPipeline(ABC):
+    """
+    The parent of FullLstmPipeline, FullLgbmPipeline
+    """
+    
+    @abstractmethod
+    def run(self)-> pd.Series:
+        pass
+    @abstractmethod
+    def get_y_test(self):
+        pass

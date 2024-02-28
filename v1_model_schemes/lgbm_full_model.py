@@ -5,17 +5,19 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 import numpy as np
 import pandas as pd
 from typing import List
+from utils_data import AbstractFullModelPipeline
 
 
 from typing import Dict, Any
 
-class FullLgbmPipeline:
+class FullLgbmPipeline(AbstractFullModelPipeline):
     
     """
     model_config = {
         'target_column': 'anomaly',
         'look_back': 10,
         'num_splits': 5,
+        'th': 0.35,
     }
     """
     
@@ -37,7 +39,7 @@ class FullLgbmPipeline:
         model_pipeline.fit(X,y)
         
         preds = model_pipeline.transform(X_test)
-        y_pred = preds['avg_prediction'].copy()
+        y_pred = pd.Series(preds['avg_prediction'].copy())
         
         return y_pred
     

@@ -12,10 +12,11 @@ import copy
 
 
 class LgbmDataPrep:
-    def __init__(self,target_column:str = 'anomaly',look_back:int=10,num_splits:int=5) -> None:
+    def __init__(self,target_column:str = 'anomaly',look_back:int=10,num_splits:int=5,th=0.5) -> None:
         self.target_column = target_column
         self.look_back = look_back 
         self.num_splits = num_splits
+        self.th = th
 
     def get_model_pipeline(self):
         

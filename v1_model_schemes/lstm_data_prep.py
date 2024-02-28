@@ -11,11 +11,11 @@ from utils_data import data_splitter
 
 DATA_PATH = "../data/"
 class LstmDataPrep:
-    def __init__(self, target_column: str = "anomaly", n_steps:int =5, num_splits: int = 4) -> None:
+    def __init__(self, target_column: str = "anomaly", n_steps:int =5, num_splits: int = 4,th=0.9) -> None:
         self.target_column = target_column
         self.n_steps = n_steps
         self.num_splits = num_splits
-        
+        self.th = th
 
     def get_preprocess_pipeline(self):
         return Pipeline([( "drop_targets",DropColumnTransformer(["changepoint", self.target_column]),),])

@@ -1,12 +1,33 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix , ConfusionMatrixDisplay
 from sklearn.metrics import roc_curve, auc
+from typing import Any, Dict
+from utils_data import AbstractFullModelPipeline
+import copy
+from IPython.display import display
 
-"""
-    {
+def calc_model_metrics(y_true,y_pred,th):
+    accuracy = accuracy_score(y_true, np.where(y_pred>=th,1,0))
+    cm = confusion_matrix(y_true, np.where(y_pred>=th,1,0))
+    tn = cm[0,0]
+    tp = cm[1,1]
+    fn = cm[1,0]
+    fp = cm[0,1]
+    mar = round(fn / (fn + tp), 4) if (fn + tp) != 0 else 0
+    far = round(fp/(fp+tp),4) if (fp+tp) != 0 else 0 
+    f1 = round(f1_score(y_true, np.where(y_pred>=th,1,0)),4)
+    fpr, tpr, thresholds = roc_curve(y_true, y_pred)
+    roc_auc = auc(fpr, tpr)
+    return accuracy,cm,mar,far,f1,fpr, tpr, thresholds, roc_auc    
+
+class ModelEvaluation:
+    
+    """
+    eval_config = {
         model_name: {
             'y_test': [],
             'y_pred': [],
@@ -25,46 +46,29 @@ from sklearn.metrics import roc_curve, auc
     }
     """
 
-
-def _calc_metrics(y_true,y_pred,th):
-    accuracy = accuracy_score(y_true, np.where(y_pred>=th,1,0))
-    cm = confusion_matrix(y_true, np.where(y_pred>=th,1,0))
-    tn = cm[0,0]
-    tp = cm[1,1]
-    fn = cm[1,0]
-    fp = cm[0,1]
-    mar = fn/(fn+tp)
-    f1 = f1_score(y_true, np.where(y_pred>=th,1,0))
-    fpr, tpr, thresholds = roc_curve(y_true, y_pred)
-    roc_auc = auc(fpr, tpr)
-    return accuracy,cm,mar,f1,fpr, tpr, thresholds, roc_auc
-
-
-class ModelEvaluation:
-    def __init__(self,models_config) -> None:
-        self.models_config = models_config
+    def __init__(self,eval_config) -> None:
+        self.eval_config = eval_config
     
     def calc_metrics(self):
-        for model_name in self.models_config.keys():
-            accuracy,cm,mar,f1,fpr, tpr, thresholds, roc_auc = _calc_metrics(
-                self.models_config[model_name]['y_test'],
-                self.models_config[model_name]['y_pred'],
-                self.models_config[model_name]['th']
+        for model_name in self.eval_config.keys():
+            accuracy,cm,mar,far,f1,fpr, tpr, thresholds, roc_auc = calc_model_metrics(
+                self.eval_config[model_name]['y_test'],
+                self.eval_config[model_name]['y_pred'],
+                self.eval_config[model_name]['th']
                 )
             
-            self.models_config[model_name]['accuracy'] = accuracy
-            self.models_config[model_name]['cm'] = cm
-            self.models_config[model_name]['mar_score'] = mar
-            self.models_config[model_name]['f1'] = f1
+            self.eval_config[model_name]['accuracy'] = accuracy
+            self.eval_config[model_name]['cm'] = cm
+            self.eval_config[model_name]['mar_score'] = mar
+            self.eval_config[model_name]['far_score'] = far
+            self.eval_config[model_name]['f1'] = f1
             
-            self.models_config[model_name]['fpr'] = fpr
-            self.models_config[model_name]['tpr'] = tpr
-            self.models_config[model_name]['thresholds'] = thresholds
-            self.models_config[model_name]['roc_auc'] = roc_auc
-        # return self
+            self.eval_config[model_name]['fpr'] = fpr
+            self.eval_config[model_name]['tpr'] = tpr
+            self.eval_config[model_name]['thresholds'] = thresholds
+            self.eval_config[model_name]['roc_auc'] = roc_auc
 
     def plot_metrics(self,title = 'Model Evaluation Metrics'):
-        
         self.calc_metrics()
 
         fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(14, 5))
@@ -72,17 +76,17 @@ class ModelEvaluation:
         roc_curve_ax = ax[2]
         colors = ['blue','darkorange']
         
-        for i,model_name in enumerate(self.models_config.keys()):
+        for i,model_name in enumerate(self.eval_config.keys()):
             cm_ax = ax[i]
-            ConfusionMatrixDisplay(confusion_matrix=self.models_config[model_name]['cm']).plot(ax=cm_ax,cmap='Blues',values_format='d')
+            ConfusionMatrixDisplay(confusion_matrix=self.eval_config[model_name]['cm']).plot(ax=cm_ax,cmap='Blues',values_format='d')
             cm_ax.set_title(f'{model_name} Confusion Matrix')
             cm_ax.set_xlabel('Predicted labels')
             cm_ax.set_ylabel('True labels')
             
-            label=f'AUC {model_name} = {self.models_config[model_name]["roc_auc"]:.2f}'
+            label=f'AUC {model_name} = {self.eval_config[model_name]["roc_auc"]:.2f}'
             roc_curve_ax.plot(
-                self.models_config[model_name]['fpr'], 
-                self.models_config[model_name]['tpr'],
+                self.eval_config[model_name]['fpr'], 
+                self.eval_config[model_name]['tpr'],
                 color=colors[i], lw=2, label=label
             )
         roc_curve_ax.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
@@ -95,14 +99,68 @@ class ModelEvaluation:
         plt.show()
 
 class ModelSelector:
-    def __init__(self,model,params,train_set,test_set) -> None: # ,baseline_mar,baseline_f1
-        self.train_set =train_set
-        self.test_set = test_set
+    """
+    model_config = {
+        'target_column': 'anomaly',
+        'look_back': 10,
+        'num_splits': 5,
+        'th': 0.5
+}
+    """
+    def __init__(self,model_config:Dict[str,Any],model:AbstractFullModelPipeline,min_splits=1,max_splits=20) -> None:
+        
+        self.model_config = model_config
+        self.model =model
         self.best_model = None
-        # self.baseline_mar = baseline_mar
-        # self.baseline_f1 = baseline_f1
-        # self.best_mar = None
-        # self.f1 = None
-    def choose_best(self):
-        pass
+        self.min_splits = min_splits
+        self.max_splits = max_splits
+        self.summary_table = None
+    
+    def run_model_permutations(self):
+        results = {}
+        config = copy.deepcopy(self.model_config)
+        model = copy.deepcopy(self.model)
+        summary_table = pd.DataFrame(index=['f1', 'mar','far'])
+        
+        for i in range(self.min_splits,self.max_splits+1):
+            print(f"Run model number {i}")
+            config['num_splits'] = i
+            full_model = model(config)
+            y_pred = full_model.run()
+            y_test = full_model.y_test
+            accuracy,cm,mar,far,f1,fpr, tpr, thresholds, roc_auc = calc_model_metrics(y_true=y_test,y_pred=y_pred,th=config['th'])
+            print('mar', mar,'far', far, 'f1', f1)
+            
+            results[f'model_{i}'] =  {
+                'mar': mar,
+                'far': far,
+                'f1': f1,
+                'th': self.model_config['th'],
+                'predictions' : y_pred,
+                'model_name' : f'model_{i}',
+                'model': full_model,
+            }
+            
+            summary_table = summary_table.assign(
+                **{
+                    f'model_{i}' : [f1, mar, far],
+                }
+            )
+            
+        return summary_table, results
+    
+    def select_best(self,f1_th):
+        summary_table,results = self.run_model_permutations()
+        table = summary_table.T.sort_values(by=['mar','f1'],ascending=[False,False])
+        
+        display(table.style.background_gradient(axis=0))
+        best_model_name = table[table['f1'] >= f1_th].head(1)
+        
+        if best_model_name.empty:
+            best_model_name = table.head(1)
+        
+        self.best_model = results[str(best_model_name.index[0])]
+        display(best_model_name.style.set_caption("Best Model Scores"))
+        
+        return self.best_model
     
