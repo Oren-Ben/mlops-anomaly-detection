@@ -19,7 +19,7 @@ def calc_model_metrics(y_true, y_pred, th):
     fn = cm[1, 0]
     fp = cm[0, 1]
     mar = round(fn / (fn + tp), 4) if (fn + tp) != 0 else 0
-    far = round(fp / (fp + tp), 4) if (fp + tp) != 0 else 0
+    far = round(fp / (fp + tn), 4) if (fp + tp) != 0 else 0
     f1 = round(f1_score(y_true, np.where(y_pred >= th, 1, 0)), 4)
     fpr, tpr, thresholds = roc_curve(y_true, y_pred)
     roc_auc = auc(fpr, tpr)
