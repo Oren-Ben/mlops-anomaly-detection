@@ -4,6 +4,9 @@ import pandas as pd
 from typing import List, Union, Tuple
 from abc import ABC, abstractmethod
 
+def get_absolute_path(*paths) -> str:
+    dirname = os.path.dirname(__file__)
+    return os.path.normalize(os.path.join(dirname, *paths))
 
 def load_dfs_by_source(data_dir: str, data_source: str) -> pd.DataFrame:
     """
@@ -16,11 +19,15 @@ def load_dfs_by_source(data_dir: str, data_source: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: _description_
     """
+    
+    data_absolute_path = get_absolute_path(data_dir)
+
     all_files = []
-    for root, dirs, files in os.walk(data_dir):
+    for root, dirs, files in os.walk(data_absolute_path):
+
         for file in files:
             if file.endswith(".csv"):
-                all_files.append(os.path.join(root, file))
+                all_files.append(get_absolute_path(root, file))
     all_files.sort()
 
     dfs_list = [
