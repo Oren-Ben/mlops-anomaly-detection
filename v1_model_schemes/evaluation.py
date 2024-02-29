@@ -168,7 +168,7 @@ class ModelSelector:
 
     def select_best(self, f1_th):
         summary_table, results = self.run_model_permutations()
-        table = summary_table.T.sort_values(by=["mar", "f1"], ascending=[False, False])
+        table = summary_table.T.sort_values(by=["mar", "f1"], ascending=[True, False])
 
         display(table.style.background_gradient(axis=0))
         best_model_name = table[table["f1"] >= f1_th].head(1)

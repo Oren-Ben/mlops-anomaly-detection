@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 def get_absolute_path(*paths) -> str:
     dirname = os.path.dirname(__file__)
-    return os.path.normalize(os.path.join(dirname, *paths))
+    return os.path.normpath(os.path.join(dirname, *paths))
 
 def load_dfs_by_source(data_dir: str, data_source: str) -> pd.DataFrame:
     """
