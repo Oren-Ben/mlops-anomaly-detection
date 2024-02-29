@@ -2,6 +2,10 @@ import pandas as pd
 from lgbm_full_model import FullLgbmPipeline
 from evaluation import ModelSelector
 from evaluation import ModelEvaluation
+from utils_data import get_absolute_path
+
+data_absolute_path = get_absolute_path('../data/lgbm_baseline_predictions.csv')
+
 
 model_config = {
     'target_column': 'anomaly',
@@ -13,7 +17,7 @@ model_config = {
 selector = ModelSelector(model_config,FullLgbmPipeline,min_splits=1,max_splits=10)
 res = selector.select_best(f1_th=0.9)
 
-base_preds = pd.read_csv('../data/lgbm_baseline_predictions.csv')['y_pred']
+base_preds = pd.read_csv(data_absolute_path)['y_pred']
 
 eval_config = {
     'baseline' : {
@@ -29,5 +33,10 @@ eval_config = {
     }
 }
 
-eval = ModelEvaluation(eval_config=eval_config)
-eval.plot_metrics()
+def main():
+    eval = ModelEvaluation(eval_config=eval_config)
+    eval.plot_metrics()
+
+if __name__ == "__main__":
+    main()
+

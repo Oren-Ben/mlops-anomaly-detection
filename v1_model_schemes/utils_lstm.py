@@ -2,15 +2,17 @@ import os
 import numpy as np
 import pandas as pd
 from typing import List, Optional
-
+from utils_data import get_absolute_path
 
 DATA_PATH = "../data/"
 
 
-def load_lstm_dfs(path_to_data=DATA_PATH):
+def load_lstm_dfs(data_dir=DATA_PATH):
     # benchmark files checking
+    data_absolute_path = get_absolute_path(data_dir)
+    
     all_files = []
-    for root, dirs, files in os.walk(path_to_data):
+    for root, dirs, files in os.walk(data_absolute_path):
         for file in files:
             if file.endswith(".csv") and "baseline_predictions" not in file:
                 all_files.append(os.path.join(root, file))

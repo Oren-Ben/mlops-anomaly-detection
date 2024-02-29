@@ -2,6 +2,9 @@ import pandas as pd
 from lstm_full_model import FullLstmPipeline
 from evaluation import ModelSelector
 from evaluation import ModelEvaluation
+from utils_data import get_absolute_path
+
+data_absolute_path = get_absolute_path('../data/lstm_baseline_predictions.csv')
 
 model_config = {
     'target_column': 'anomaly',
@@ -12,7 +15,7 @@ model_config = {
 
 selector = ModelSelector(model_config,FullLstmPipeline,min_splits=32,max_splits=35)
 res = selector.select_best(f1_th=0.5)
-base_preds = pd.read_csv('../data/lstm_baseline_predictions.csv')['y_pred']
+base_preds = pd.read_csv(data_absolute_path)['y_pred']
 
 eval_config = {
     'baseline' : {
@@ -28,5 +31,10 @@ eval_config = {
     }
 }
 
-eval = ModelEvaluation(eval_config=eval_config)
-eval.plot_metrics()
+
+def main():
+    eval = ModelEvaluation(eval_config=eval_config)
+    eval.plot_metrics()
+
+if __name__ == "__main__":
+    main()
