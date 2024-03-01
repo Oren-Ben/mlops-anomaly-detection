@@ -177,6 +177,8 @@ class ModelSelector:
             best_model_name = table.head(1)
 
         self.best_model = results[str(best_model_name.index[0])]
+        print("Best Model Scores")
+        print(best_model_name)
         display(best_model_name.style.set_caption("Best Model Scores"))
 
         return self.best_model
